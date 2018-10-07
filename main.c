@@ -2,7 +2,7 @@
 #include "pilha.h"
 
 int main(void){
-
+    resolveExpressao();
 
     return 0;
 }
