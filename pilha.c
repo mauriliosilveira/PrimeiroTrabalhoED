@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "pilha.h"
 #include <stdlib.h>
+#include <string.h>
 
 t_pilha* alocaPilha(){
     t_pilha* pilha = (t_pilha*) malloc(sizeof(t_pilha));
@@ -71,13 +72,52 @@ int resolveExpressao(){
     t_pilha* pilha = alocaPilha();
 
     while(expressao[contador] != '\0'){
-        if(expressao[contador] != ' '){
+        if((expressao[contador] == '(') || (expressao[contador] == '[') || (expressao[contador] == '{')){
             inserirPilha(expressao[contador], pilha);
+        }else if((expressao[contador] == ')') || (expressao[contador] == ']') || (expressao[contador] == '}')){
+            if(((expressao[contador] == ')') && (pilha->primeiro == '(')) ||
+               ((expressao[contador] == ']') && (pilha->primeiro == '[')) ||
+               ((expressao[contador] == '}') && (pilha->primeiro == '{'))){
+               
+                t_elemento* aux_desaloca = pilha->primeiro;
+                pilha->primeiro = aux_desaloca->proximo;
+
+                free(aux_desaloca);
+                aux_desaloca = NULL;
+                pilha->topo --;
+            }else{
+                expressaoInvalida(pilha);
+
+                return -1;
+            }
         }
         contador ++;
     }
+    
+    if(pilha->topo > -1){
+        expressaoInvalida(pilha);
 
-    printarPilha(pilha);
+        return -1;
+    }
+
+    return 1;
+}
+
+int expressaoInvalida(t_pilha* pilha){
+    printf("Expressão invalida! \n");
+
+    do{
+        t_elemento* aux_desaloca = pilha->primeiro;
+
+        pilha->primeiro = aux_desaloca->proximo;
+
+        free(aux_desaloca);
+        aux_desaloca = NULL;
+        pilha->topo --;
+    }while(pilha->primeiro != NULL);   
+
+    free(pilha);
+    printf("Todos foram removidos! \n");
 
     return 1;
 }
