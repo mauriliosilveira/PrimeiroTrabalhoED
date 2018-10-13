@@ -16,21 +16,22 @@ t_pilha* alocaPilha(){
     return pilha;
 }
 
-t_elemento* alocaElemento(char caractere, t_pilha* pilha){
+t_elemento* alocaElemento(char* caractere, t_pilha* pilha){
     t_elemento* elemento = (t_elemento*) malloc(sizeof(t_elemento));
+    elemento->caractere = (char*) malloc((strlen(caractere)+1) * sizeof(char));
 
     if(!elemento){
         free(pilha);
         exit(0);
     }
 
-    elemento->caractere = caractere;
+    strcpy(elemento->caractere, caractere);
     elemento->proximo = NULL;
 
     return elemento;
 }
 
-int inserirPilha(char caractere, t_pilha* pilha){
+int inserirPilha(char* caractere, t_pilha* pilha){
     /*VER SE A PILHA ESTPA VAZIA*/
 
     t_elemento* aux_inserir = alocaElemento(caractere, pilha);
@@ -54,7 +55,7 @@ void printarPilha(t_pilha* pilha){
         t_elemento* aux_printar = pilha->primeiro;
 
         while(aux_printar != NULL){
-            printf("%c\n", aux_printar->caractere);
+            printf("%c\n", *aux_printar->caractere);
 
             aux_printar = aux_printar->proximo;
         }
@@ -63,38 +64,68 @@ void printarPilha(t_pilha* pilha){
     }    
 }
 
-int resolveExpressao(){
-    char expressao[100];
+void desalocaPilha(t_pilha* pilha){
+    t_elemento* elemento = pilha->primeiro;
+    pilha->primeiro = elemento->proximo;
+
+    free(elemento);
+    elemento = NULL;
+    pilha->topo --;
+
+    return;
+}
+
+int resolveExpressao(char* caractere, t_pilha* pilha){
     int contador = 0;
+    char aux;
 
-    scanf("%[^\n]", expressao);
-
-    t_pilha* pilha = alocaPilha();
-
-    while(expressao[contador] != '\0'){
-        if((expressao[contador] == '(') || (expressao[contador] == '[') || (expressao[contador] == '{')){
-            inserirPilha(expressao[contador], pilha);
-        }else if((expressao[contador] == ')') || (expressao[contador] == ']') || (expressao[contador] == '}')){
-            if(((expressao[contador] == ')') && (pilha->primeiro == '(')) ||
-               ((expressao[contador] == ']') && (pilha->primeiro == '[')) ||
-               ((expressao[contador] == '}') && (pilha->primeiro == '{'))){
-               
-                t_elemento* aux_desaloca = pilha->primeiro;
-                pilha->primeiro = aux_desaloca->proximo;
-
-                free(aux_desaloca);
-                aux_desaloca = NULL;
-                pilha->topo --;
-            }else{
+    while(caractere[contador] != '\0'){
+        aux = caractere[contador];
+        
+        if((caractere[contador] == '(') || (caractere[contador] == '[') || (caractere[contador] == '{')){
+            inserirPilha(&aux, pilha);
+        }else if(caractere[contador] == ')'){
+            if((pilha->primeiro != NULL) && (pilha->topo > -1)){
+                if(*pilha->primeiro->caractere == '('){
+                    desalocaPilha(pilha);
+                }else{
+                    expressaoInvalida(pilha);
+                    return -1;
+                }
+            }else {
                 expressaoInvalida(pilha);
-
+                return -1;
+            }
+        }else if(caractere[contador] == ']'){
+            if((pilha->primeiro != NULL) && (pilha->topo > -1)){
+                if(*pilha->primeiro->caractere == '['){
+                    desalocaPilha(pilha);
+                }else{
+                    expressaoInvalida(pilha);
+                    return -1;
+                }    
+            }else {
+                expressaoInvalida(pilha);
+                return -1;
+            }
+        }else if(caractere[contador] == '}'){
+            if((pilha->primeiro != NULL) && (pilha->topo > -1)){
+                if(*pilha->primeiro->caractere == '{'){
+                    desalocaPilha(pilha);
+                }else{
+                    expressaoInvalida(pilha);
+                    return -1;
+                }    
+            }else {
+                expressaoInvalida(pilha);
                 return -1;
             }
         }
+
         contador ++;
     }
     
-    if(pilha->topo > -1){
+    if((pilha->primeiro != NULL) && (pilha->topo > -1)){
         expressaoInvalida(pilha);
 
         return -1;
@@ -105,66 +136,68 @@ int resolveExpressao(){
 
 int expressaoInvalida(t_pilha* pilha){
     printf("Expressão invalida! \n");
-
-    do{
-        t_elemento* aux_desaloca = pilha->primeiro;
-
-        pilha->primeiro = aux_desaloca->proximo;
-
-        free(aux_desaloca);
-        aux_desaloca = NULL;
-        pilha->topo --;
-    }while(pilha->primeiro != NULL);   
-
-    free(pilha);
-    printf("Todos foram removidos! \n");
-
-    return 1;
-}
-
-int calculadora(){
     
-    return 1;
-}
+    if((pilha->primeiro != NULL) && (pilha->topo > -1)){
+        do{
+            t_elemento* elemento = pilha->primeiro;
 
-void menu(){
-    system(CLEAR);
-    cabecalho();
-    
-    int opcao;
-    printf("1 - Resolver Expressão \n");
-    printf("2 - Modo Calculadora \n");
-    printf("0 - Sair \n");
-    printf("\n-> ");
-    scanf("%d", &opcao);
+            pilha->primeiro = elemento->proximo;
 
-    resposta(opcao);
-}
+            free(elemento);
+            elemento = NULL;
+            pilha->topo --;
+        }while(pilha->primeiro != NULL);   
 
-void cabecalho(){
-    printf("================================== \n");
-    printf("\t PURA MATEMATICA \n");
-    printf("================================== \n"); 
-}
-
-void resposta(int opcao){
-    if(opcao == 0){
-        system(CLEAR);
-        cabecalho();
-        printf("Saindo...");
-        getchar();
-        getchar();
-        printf("\n");
-    }else if(opcao == 1){
-        resolveExpressao();
-    }else if(opcao == 2){
-        calculadora();
-    }else{
-        system(CLEAR);
-        cabecalho();
-        printf("Comando Invalido...");
-        getchar();
-        getchar();
-        menu();
+        free(pilha);
+        printf("Todos foram removidos! \n");
     }
+
+    return 1;
 }
+
+// int calculadora(){
+    
+//     return 1;
+// }
+
+// void menu(){
+//     system(CLEAR);
+//     cabecalho();
+    
+//     int opcao;
+//     printf("1 - Resolver Expressão \n");
+//     printf("2 - Modo Calculadora \n");
+//     printf("0 - Sair \n");
+//     printf("\n-> ");
+//     scanf("%d", &opcao);
+
+//     resposta(opcao);
+// }
+
+// void cabecalho(){
+//     printf("================================== \n");
+//     printf("\t PURA MATEMATICA \n");
+//     printf("================================== \n"); 
+// }
+
+// void resposta(int opcao){
+//     if(opcao == 0){
+//         system(CLEAR);
+//         cabecalho();
+//         printf("Saindo...");
+//         getchar();
+//         getchar();
+//         printf("\n");
+//     }else if(opcao == 1){
+//         resolveExpressao();
+//     }else if(opcao == 2){
+//         calculadora();
+//     }else{
+//         system(CLEAR);
+//         cabecalho();
+//         printf("Comando Invalido...");
+//         getchar();
+//         getchar();
+//         menu();
+//     }
+//}

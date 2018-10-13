@@ -2,17 +2,12 @@
 #include "pilha.h"
 
 int main(void){
-    int resultado = 0;
+    t_pilha* pilha = alocaPilha();
+    char letra[50];
+    
+    scanf("%s", letra);
 
-    resultado = resolveExpressao();
-
-    if(resultado == 1){
-        printf("Expressao Valida \n");
-    }else if(resultado == -1){
-        printf("Expressao Invalida \n");
-    }else{
-        printf("Nenhum Resultado \n");
-    }
+    resolveExpressao(letra,pilha);
 
     return 0;
 }
