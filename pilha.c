@@ -79,6 +79,8 @@ int resolveExpressao(char* caractere, t_pilha* pilha){
     char aux;
 
     while(caractere[contador] != '\0'){
+        cabecalho();
+
         aux = caractere[contador];
         
         if((caractere[contador] == '(') || (caractere[contador] == '[') || (caractere[contador] == '{')){
@@ -128,12 +130,13 @@ int resolveExpressao(char* caractere, t_pilha* pilha){
         expressaoInvalida(pilha);
         return -1;
     }else{
-        expressaoInvalida(pilha);
-        return 1;
+        printf("Expressao Valida \n");
+        free(pilha);
     }
 }
 
 int expressaoInvalida(t_pilha* pilha){
+    cabecalho();
     printf("Expressão invalida! \n");
     
     if((pilha->primeiro != NULL) && (pilha->topo > -1)){
@@ -156,49 +159,59 @@ int expressaoInvalida(t_pilha* pilha){
     return 1;
 }
 
-// int calculadora(){
+int calculadora(){
+    cabecalho();
+    printf("Modo calculadora! \n");
+
+    return 1;
+}
+
+void menu(t_pilha* pilha){
+    cabecalho();
     
-//     return 1;
-// }
+    int opcao;
+    printf("1 - Resolver Expressão \n");
+    printf("2 - Modo Calculadora \n");
+    printf("0 - Sair \n");
+    printf("\n-> ");
+    scanf("%d", &opcao);
 
-// void menu(){
-//     system(CLEAR);
-//     cabecalho();
-    
-//     int opcao;
-//     printf("1 - Resolver Expressão \n");
-//     printf("2 - Modo Calculadora \n");
-//     printf("0 - Sair \n");
-//     printf("\n-> ");
-//     scanf("%d", &opcao);
+    resposta(opcao,pilha);
+}
 
-//     resposta(opcao);
-// }
+void cabecalho(){
+    system(CLEAR);
+    printf("================================== \n");
+    printf("\t PURA MATEMATICA \n");
+    printf("================================== \n"); 
+}
 
-// void cabecalho(){
-//     printf("================================== \n");
-//     printf("\t PURA MATEMATICA \n");
-//     printf("================================== \n"); 
-// }
+void resposta(int opcao, t_pilha* pilha){
+    if(pilha == NULL){
+       t_pilha* pilha = alocaPilha(); 
+    }
 
-// void resposta(int opcao){
-//     if(opcao == 0){
-//         system(CLEAR);
-//         cabecalho();
-//         printf("Saindo...");
-//         getchar();
-//         getchar();
-//         printf("\n");
-//     }else if(opcao == 1){
-//         resolveExpressao();
-//     }else if(opcao == 2){
-//         calculadora();
-//     }else{
-//         system(CLEAR);
-//         cabecalho();
-//         printf("Comando Invalido...");
-//         getchar();
-//         getchar();
-//         menu();
-//     }
-//}
+    if(opcao == 0){
+        system(CLEAR);
+        cabecalho();
+        printf("Saindo...");
+        getchar();
+        getchar();
+        printf("\n");
+    }else if(opcao == 1){
+        cabecalho();
+        char caractere[50];
+        printf("-> ");
+        scanf("%s", caractere);
+        resolveExpressao(caractere,pilha);
+    }else if(opcao == 2){
+        calculadora();
+    }else{
+        system(CLEAR);
+        cabecalho();
+        printf("Comando Invalido...");
+        getchar();
+        getchar();
+        menu(pilha);
+    }
+}

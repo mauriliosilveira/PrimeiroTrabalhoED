@@ -3,12 +3,8 @@
 
 int main(void){
     t_pilha* pilha = alocaPilha();
-    char letra[50];
     
-    scanf("%s", letra);
-
-    resolveExpressao(letra,pilha);
+    menu(pilha);
     
-    printarPilha(pilha);
     return 0;
 }
