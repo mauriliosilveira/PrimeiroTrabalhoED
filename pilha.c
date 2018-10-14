@@ -50,19 +50,19 @@ int inserirPilha(char* caractere, t_pilha* pilha){
     return 1;    
 }
 
-void printarPilha(t_pilha* pilha){
-    if((pilha->primeiro != NULL) && (pilha->topo >=0)){
-        t_elemento* aux_printar = pilha->primeiro;
+// void printarPilha(t_pilha* pilha){
+//     if((pilha->primeiro != NULL) && (pilha->topo >=0)){
+//         t_elemento* aux_printar = pilha->primeiro;
 
-        while(aux_printar != NULL){
-            printf("%c\n", *aux_printar->caractere);
+//         while(aux_printar != NULL){
+//             printf("%c\n", *aux_printar->caractere);
 
-            aux_printar = aux_printar->proximo;
-        }
-    }else {
-        printf("Nao tem nada na pilha! \n");
-    }    
-}
+//             aux_printar = aux_printar->proximo;
+//         }
+//     }else {
+//         printf("Nao tem nada na pilha! \n");
+//     }    
+// }
 
 void desalocaPilha(t_pilha* pilha){
     t_elemento* elemento = pilha->primeiro;
@@ -75,12 +75,11 @@ void desalocaPilha(t_pilha* pilha){
 }
 
 int resolveExpressao(char* caractere, t_pilha* pilha){
+    cabecalho();
     int contador = 0;
     char aux;
 
     while(caractere[contador] != '\0'){
-        cabecalho();
-
         aux = caractere[contador];
         
         if((caractere[contador] == '(') || (caractere[contador] == '[') || (caractere[contador] == '{')){
@@ -130,9 +129,17 @@ int resolveExpressao(char* caractere, t_pilha* pilha){
         expressaoInvalida(pilha);
         return -1;
     }else{
-        printf("Expressao Valida \n");
         free(pilha);
+        expressaoResolvida(caractere);
     }
+}
+
+int expressaoResolvida(char* caractere){
+    cabecalho();
+
+    printf("Agora vamos resolver a expressao \n");
+
+    return 1;
 }
 
 int expressaoInvalida(t_pilha* pilha){
@@ -150,11 +157,11 @@ int expressaoInvalida(t_pilha* pilha){
             elemento = NULL;
             pilha->topo --;
         }while(pilha->primeiro != NULL);   
-
-        printf("Todos foram removidos! \n");
     }
-
     free(pilha);
+    getchar();
+    getchar();
+    menu(pilha);
 
     return 1;
 }
