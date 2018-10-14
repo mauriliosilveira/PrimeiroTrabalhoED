@@ -68,11 +68,10 @@ void desalocaPilha(t_pilha* pilha){
     t_elemento* elemento = pilha->primeiro;
     pilha->primeiro = elemento->proximo;
 
+    free(elemento->caractere);
     free(elemento);
     elemento = NULL;
     pilha->topo --;
-
-    return;
 }
 
 int resolveExpressao(char* caractere, t_pilha* pilha){
@@ -127,11 +126,11 @@ int resolveExpressao(char* caractere, t_pilha* pilha){
     
     if((pilha->primeiro != NULL) && (pilha->topo > -1)){
         expressaoInvalida(pilha);
-
         return -1;
+    }else{
+        expressaoInvalida(pilha);
+        return 1;
     }
-
-    return 1;
 }
 
 int expressaoInvalida(t_pilha* pilha){
@@ -143,14 +142,16 @@ int expressaoInvalida(t_pilha* pilha){
 
             pilha->primeiro = elemento->proximo;
 
+            free(elemento->caractere);
             free(elemento);
             elemento = NULL;
             pilha->topo --;
         }while(pilha->primeiro != NULL);   
 
-        free(pilha);
         printf("Todos foram removidos! \n");
     }
+
+    free(pilha);
 
     return 1;
 }

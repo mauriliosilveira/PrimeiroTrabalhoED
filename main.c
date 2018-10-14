@@ -8,6 +8,7 @@ int main(void){
     scanf("%s", letra);
 
     resolveExpressao(letra,pilha);
-
+    
+    printarPilha(pilha);
     return 0;
 }
