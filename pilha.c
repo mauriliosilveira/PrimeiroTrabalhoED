@@ -7,7 +7,7 @@ t_pilha* alocaPilha(){
     t_pilha* pilha = (t_pilha*) malloc(sizeof(t_pilha));
 
     if(!pilha){
-        exit(0);
+        exit(-1);
     }
 
     pilha->primeiro = NULL;
@@ -22,7 +22,7 @@ t_elemento* alocaElemento(char* caractere, t_pilha* pilha){
 
     if(!elemento){
         free(pilha);
-        exit(0);
+        exit(-1);
     }
 
     strcpy(elemento->caractere, caractere);
@@ -32,12 +32,14 @@ t_elemento* alocaElemento(char* caractere, t_pilha* pilha){
 }
 
 int inserirPilha(char* caractere, t_pilha* pilha){
-    /*VER SE A PILHA ESTPA VAZIA*/
+    if(pilha == NULL){
+        exit(-1);
+    }
 
     t_elemento* aux_inserir = alocaElemento(caractere, pilha);
         
     if(!aux_inserir){
-        exit(0);
+        exit(-1);
     }else if(pilha->topo == -1){
         pilha->primeiro = aux_inserir;
     }else{
@@ -49,20 +51,6 @@ int inserirPilha(char* caractere, t_pilha* pilha){
 
     return 1;    
 }
-
-// void printarPilha(t_pilha* pilha){
-//     if((pilha->primeiro != NULL) && (pilha->topo >=0)){
-//         t_elemento* aux_printar = pilha->primeiro;
-
-//         while(aux_printar != NULL){
-//             printf("%c\n", *aux_printar->caractere);
-
-//             aux_printar = aux_printar->proximo;
-//         }
-//     }else {
-//         printf("Nao tem nada na pilha! \n");
-//     }    
-// }
 
 void desalocaPilha(t_pilha* pilha){
     t_elemento* elemento = pilha->primeiro;
@@ -130,11 +118,13 @@ int resolveExpressao(char* caractere, t_pilha* pilha){
         return -1;
     }else{
         free(pilha);
-        expressaoResolvida(caractere);
+        posFixa(caractere);
     }
+
+    return 1;
 }
 
-int expressaoResolvida(char* caractere){
+int posFixa(char* caractere){
     cabecalho();
 
     printf("Agora vamos resolver a expressao \n");
@@ -158,8 +148,8 @@ int expressaoInvalida(t_pilha* pilha){
             pilha->topo --;
         }while(pilha->primeiro != NULL);   
     }
+
     free(pilha);
-    getchar();
     getchar();
     menu(pilha);
 
@@ -182,7 +172,7 @@ void menu(t_pilha* pilha){
     printf("0 - Sair \n");
     printf("\n-> ");
     scanf("%d", &opcao);
-
+    setbuf(stdin, NULL);
     resposta(opcao,pilha);
 }
 
@@ -194,10 +184,6 @@ void cabecalho(){
 }
 
 void resposta(int opcao, t_pilha* pilha){
-    if(pilha == NULL){
-       t_pilha* pilha = alocaPilha(); 
-    }
-
     if(opcao == 0){
         system(CLEAR);
         cabecalho();
@@ -207,9 +193,10 @@ void resposta(int opcao, t_pilha* pilha){
         printf("\n");
     }else if(opcao == 1){
         cabecalho();
-        char caractere[50];
+        char caractere[1000];
         printf("-> ");
-        scanf("%s", caractere);
+        scanf("%[^\n]s", caractere);
+        getchar();
         resolveExpressao(caractere,pilha);
     }else if(opcao == 2){
         calculadora();
