@@ -23,7 +23,7 @@ int expressaoInvalida(t_pilha* pilha);
 void desalocaPilha(t_pilha* pilha);
 int resolveExpressao(char* caractere, t_pilha* pilha);
 
-int posFixa(char* caractere);
+int posFixa(t_pilha* pilha, char* caractere);
 
 void resposta(int opcao,t_pilha* pilha);
 void menu(t_pilha* pilha);
