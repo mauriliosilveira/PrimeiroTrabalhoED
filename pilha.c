@@ -135,87 +135,114 @@ int posFixa(t_pilha* pilha, char* caractere){
     while(caractere[contador] != '\0'){
         aux = caractere[contador];
         
-        if((caractere[contador] == '(') || (caractere[contador] == '[') || 
-           (caractere[contador] == '{') || (caractere[contador] == '+') || 
-           (caractere[contador] == '-') || (caractere[contador] == '*') || 
-           (caractere[contador] == '/')){
-
-            if(pilha->primeiro == NULL){
+        if((caractere[contador] == '(') || (caractere[contador] == '[') || (caractere[contador] == '{') || (caractere[contador] == '+') || (caractere[contador] == '-') || (caractere[contador] == '*') || (caractere[contador] == '/')){
+            if(pilha->primeiro == NULL){    
                 inserirPilha(&aux,pilha);
-
-                if((caractere[contador] != '(') && (caractere[contador] != '{') && (caractere[contador] != '[')){
-                    nCaractere[nContador] = ' ';
+                nCaractere[nContador] = ' ';
+                nContador ++;
+            }else if((*pilha->primeiro->caractere == '(') || (*pilha->primeiro->caractere == '{') || (*pilha->primeiro->caractere == '[')){
+                inserirPilha(&aux,pilha);
+                nCaractere[nContador] = ' ';
+                nContador ++;
+            }else if(((caractere[contador] == '*') && (*pilha->primeiro->caractere == '-')) || ((caractere[contador] == '*') && (*pilha->primeiro->caractere == '+'))){
+                inserirPilha(&aux,pilha);
+                nCaractere[nContador] = ' ';
+                nContador ++;
+            }else if(((caractere[contador] == '*') && (*pilha->primeiro->caractere == '*')) || ((caractere[contador] == '*') && (*pilha->primeiro->caractere == '/'))){
+                while((*pilha->primeiro->caractere == '*') || (*pilha->primeiro->caractere == '/')){
+                    nCaractere[nContador] = *pilha->primeiro->caractere;
                     nContador ++;
+                    desalocaPilha(pilha);
                 }
+                inserirPilha(&aux,pilha);
+                nCaractere[nContador] = ' ';
+                nContador ++;
+            }else if(((caractere[contador] == '/') && (*pilha->primeiro->caractere == '-')) || ((caractere[contador] == '/') && (*pilha->primeiro->caractere == '+'))){
+                inserirPilha(&aux,pilha);
+                nCaractere[nContador] = ' ';
+                nContador ++;
+            }else if(((caractere[contador] == '/') && (*pilha->primeiro->caractere == '/')) || ((caractere[contador] == '/') && (*pilha->primeiro->caractere == '*'))){
+                while((*pilha->primeiro->caractere == '/') || (*pilha->primeiro->caractere == '*')){
+                    nCaractere[nContador] = *pilha->primeiro->caractere;
+                    nContador ++;
+                    desalocaPilha(pilha);
+                } 
+                inserirPilha(&aux,pilha);
+                nCaractere[nContador] = ' ';
+                nContador ++;
+            }else if(((caractere[contador] == '+') && (*pilha->primeiro->caractere == '*')) || ((caractere[contador] == '+') && (*pilha->primeiro->caractere == '/')) || ((caractere[contador] == '+') && (*pilha->primeiro->caractere == '+')) || ((caractere[contador] == '+') && (*pilha->primeiro->caractere == '-'))){
+                while((*pilha->primeiro->caractere == '/') || (*pilha->primeiro->caractere == '*') || (*pilha->primeiro->caractere == '-') || (*pilha->primeiro->caractere == '+')){
+                    nCaractere[nContador] = *pilha->primeiro->caractere;
+                    nContador ++;
+                    desalocaPilha(pilha);
+                } 
+                inserirPilha(&aux,pilha);
+                nCaractere[nContador] = ' ';
+                nContador ++;
+            }else if(((caractere[contador] == '-') && (*pilha->primeiro->caractere == '*')) || ((caractere[contador] == '-') && (*pilha->primeiro->caractere == '/')) || ((caractere[contador] == '-') && (*pilha->primeiro->caractere == '-')) || ((caractere[contador] == '-') && (*pilha->primeiro->caractere == '+'))){
+                while((*pilha->primeiro->caractere == '/') || (*pilha->primeiro->caractere == '*') || (*pilha->primeiro->caractere == '-') || (*pilha->primeiro->caractere == '+')){
+                    nCaractere[nContador] = *pilha->primeiro->caractere;
+                    nContador ++;
+                    desalocaPilha(pilha);
+                } 
+                inserirPilha(&aux,pilha);
+                nCaractere[nContador] = ' ';
+                nContador ++;
             }else{
-                if(((caractere[contador] == '*') && (*pilha->primeiro->caractere == '-')) ||
-                    ((caractere[contador] == '*') && (*pilha->primeiro->caractere == '+'))){
-                    inserirPilha(&aux,pilha);
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                }else if(((caractere[contador] == '*') && (*pilha->primeiro->caractere == '*')) ||
-                    ((caractere[contador] == '*') && (*pilha->primeiro->caractere == '/'))){
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                    nCaractere[nContador] = *pilha->primeiro->caractere;
+                inserirPilha(&aux,pilha);
+                nCaractere[nContador] = ' ';
+                nContador ++;
+            }
+        }else if(caractere[contador] == ')'){
+            t_elemento* elemento = pilha->primeiro;
+
+            while(elemento != NULL){
+                if(*elemento->caractere == '('){
+                    desalocaPilha(pilha);
+                    elemento->proximo = NULL;
+                }else{
+                    nCaractere[nContador] = *elemento->caractere;
                     nContador ++;
                     desalocaPilha(pilha);
-                    inserirPilha(&aux,pilha);
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                }else if(((caractere[contador] == '/') && (*pilha->primeiro->caractere == '-')) ||
-                          ((caractere[contador] == '/') && (*pilha->primeiro->caractere == '+'))){
-                    inserirPilha(&aux,pilha);
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                }else if(((caractere[contador] == '/') && (*pilha->primeiro->caractere == '/')) ||
-                          ((caractere[contador] == '/') && (*pilha->primeiro->caractere == '*'))){
-                    nCaractere[nContador] = ' ';
-                    nContador ++;
-                    nCaractere[nContador] = *pilha->primeiro->caractere;
-                    nContador ++;
-                    desalocaPilha(pilha);
-                    inserirPilha(&aux,pilha);
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                }else if(((caractere[contador] == '+') && (*pilha->primeiro->caractere == '/')) ||
-                          ((caractere[contador] == '+') && (*pilha->primeiro->caractere == '*'))){
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                    nCaractere[nContador] = *pilha->primeiro->caractere;
-                    nContador ++;
-                    desalocaPilha(pilha);
-                    inserirPilha(&aux,pilha);
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                }else if(((caractere[contador] == '+') && (*pilha->primeiro->caractere == '-')) ||
-                          ((caractere[contador] == '-') && (*pilha->primeiro->caractere == '+'))){
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                    nCaractere[nContador] = *pilha->primeiro->caractere;
-                    nContador ++;
-                    desalocaPilha(pilha);
-                    inserirPilha(&aux,pilha);
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                }else if(((caractere[contador] == '-') && (*pilha->primeiro->caractere == '/')) ||
-                          ((caractere[contador] == '-') && (*pilha->primeiro->caractere == '*'))){
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
-                    nCaractere[nContador] = *pilha->primeiro->caractere;
-                    nContador ++;
-                    desalocaPilha(pilha);
-                    inserirPilha(&aux,pilha);
-                    nCaractere[nContador] = ' '; 
-                    nContador ++;
                 }
-            }   
-            
-        }else if((caractere[contador] != ' ') && (caractere[contador] != ')') &&
-                 (caractere[contador] != ']') && (caractere[contador] != '}')){
+                elemento = elemento->proximo;
+            }
+
+        }else if(caractere[contador] == ']'){
+            t_elemento* elemento = pilha->primeiro;
+
+            while(elemento != NULL){
+                if(*elemento->caractere == '['){
+                    desalocaPilha(pilha);
+                    elemento->proximo = NULL;
+                }else{
+                    nCaractere[nContador] = *elemento->caractere;
+                    nContador ++;
+                    desalocaPilha(pilha);
+                }
+                elemento = elemento->proximo;
+            }
+
+        }else if(caractere[contador] == '}'){
+            t_elemento* elemento = pilha->primeiro;
+
+            while(elemento != NULL){
+                if(*elemento->caractere == '{'){
+                    desalocaPilha(pilha);
+                    elemento->proximo = NULL;
+                }else{
+                    nCaractere[nContador] = *elemento->caractere;
+                    nContador ++;
+                    desalocaPilha(pilha);
+                }
+                elemento = elemento->proximo;
+            }
+
+        }else if((caractere[contador] != ' ') && (caractere[contador] != ')') && (caractere[contador] != ']') && (caractere[contador] != '}')){
             nCaractere[nContador] = aux;
             nContador ++;
         }
+
         contador ++;
     }
 
@@ -223,8 +250,6 @@ int posFixa(t_pilha* pilha, char* caractere){
         t_elemento* elemento = pilha->primeiro;
 
         while(elemento != NULL){
-            nCaractere[nContador] = ' '; 
-            nContador ++;
             nCaractere[nContador] = *elemento->caractere;
             nContador ++;
             elemento = elemento->proximo;
@@ -236,10 +261,10 @@ int posFixa(t_pilha* pilha, char* caractere){
         free(pilha);
         pilha = NULL;
     }
-    
+
     nCaractere[nContador] = '\0';
     printf("%s\n", nCaractere);
-    
+  
     return 1;
 }
 
