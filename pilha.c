@@ -67,6 +67,10 @@ int resolveExpressao(char* caractere, t_pilha* pilha){
     int contador = 0;
     char aux;
 
+    if(pilha == NULL){
+        pilha = alocaPilha();
+    }
+
     while(caractere[contador] != '\0'){
         aux = caractere[contador];
         
@@ -254,6 +258,9 @@ int posFixa(t_pilha* pilha, char* caractere){
 
     nCaractere[nContador] = '\0';
     
+    printf("Expressão Valida!\n");
+    printf("Forma Posfixa: ");
+
     int cont = 0;
     while(nCaractere[cont] != '\0'){
         if(((nCaractere[cont] != ' ') && (nCaractere[cont+1] == '+')) || 
@@ -275,17 +282,11 @@ int posFixa(t_pilha* pilha, char* caractere){
     }
 
     printf("\n");
-  
+    printf("Valor da Expressao: \n");
+    getchar();
+    menu(pilha);
+
     return 1;
-}
-
-void printarPilha(t_pilha* pilha){
-    t_elemento* elemento = pilha->primeiro;
-
-    while(elemento != NULL){
-        printf("%c\n", *elemento->caractere);
-        elemento = elemento->proximo;
-    }
 }
 
 int expressaoInvalida(t_pilha* pilha){

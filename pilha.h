@@ -17,7 +17,6 @@ t_pilha* alocaPilha();
 t_elemento* alocaElemento(char* caractere, t_pilha* pilha);
 
 int inserirPilha(char* caractere, t_pilha* pilha);
-void printarPilha(t_pilha* pilha);
 
 int expressaoInvalida(t_pilha* pilha);
 void desalocaPilha(t_pilha* pilha);
