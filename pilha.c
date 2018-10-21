@@ -2,6 +2,20 @@
 #include "pilha.h"
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+
+t_pilhaNumero* alocaPilhaNumero(){
+    t_pilhaNumero* pilha = (t_pilhaNumero*) malloc(sizeof(t_pilhaNumero));
+
+    if(!pilha){
+        exit(-1);
+    }
+
+    pilha->primeiro = NULL;
+    pilha->topo = -1;
+
+    return pilha;
+}
 
 t_pilha* alocaPilha(){
     t_pilha* pilha = (t_pilha*) malloc(sizeof(t_pilha));
@@ -259,35 +273,220 @@ int posFixa(t_pilha* pilha, char* caractere){
     nCaractere[nContador] = '\0';
     
     printf("Expressão Valida!\n");
-    printf("Forma Posfixa: ");
 
-    int cont = 0;
+    int cont = 0, contPos = 0;
+    char expressaoPosFixa[1000];
+
     while(nCaractere[cont] != '\0'){
         if(((nCaractere[cont] != ' ') && (nCaractere[cont+1] == '+')) || 
            ((nCaractere[cont] != ' ') && (nCaractere[cont+1] == '-')) ||
            ((nCaractere[cont] != ' ') && (nCaractere[cont+1] == '*')) ||
            ((nCaractere[cont] != ' ') && (nCaractere[cont+1] == '/'))){
-            printf("%c", nCaractere[cont]);
-            printf(" ");
+            expressaoPosFixa[contPos] = nCaractere[cont];
+            contPos ++;
+            expressaoPosFixa[contPos] = ' ';
         }else if(((nCaractere[cont] == '+') && (nCaractere[cont+1] != ' ')) || 
                  ((nCaractere[cont] == '-') && (nCaractere[cont+1] != ' ')) ||
                  ((nCaractere[cont] == '/') && (nCaractere[cont+1] != ' ')) ||
                  ((nCaractere[cont] == '*') && (nCaractere[cont+1] != ' '))){
-            printf("%c", nCaractere[cont]);
-            printf(" ");
+            expressaoPosFixa[contPos] = nCaractere[cont];
+            contPos ++;
+            expressaoPosFixa[contPos] = ' ';
         }else{
-            printf("%c", nCaractere[cont]);
+            expressaoPosFixa[contPos] = nCaractere[cont];
         }
+        contPos ++;
         cont ++;
     }
 
-    printf("\n");
-    printf("Valor da Expressao: \n");
+    expressaoPosFixa[contPos] = '\0';
+    int i = 0, j = 0;
+    char expressao[1000];
+    double valor = 0, a = 0 , b = 0, r = 0;
+
+    t_pilhaNumero* pilha2 = alocaPilhaNumero();
+    
+    while((expressaoPosFixa[i] != '\0') && (i < strlen(expressaoPosFixa))) {
+        j=0;
+        if((expressaoPosFixa[i]>=65 && expressaoPosFixa[i]<=90) || (expressaoPosFixa[i]>=97 && expressaoPosFixa[i]<=122)){
+            printf("Forma Posfixa: ");
+            printf("%s\n", expressaoPosFixa);
+            printf("Não é possível calcular a expressao!\n");
+            getchar();
+            if(pilha2->primeiro != NULL){
+                t_numero* elemento = pilha2->primeiro;
+
+                while(elemento != NULL){
+                    desalocaPilhaNumero(pilha2);
+                }
+            }
+            if(pilha2->primeiro == NULL){
+                free(pilha2);
+                pilha2 = NULL;
+            }
+            menu(pilha);
+        }else if(expressaoPosFixa[i]<=57 && expressaoPosFixa[i]>=48){ /* \b 57 é 9 em ASCII e \b 48 é 0. */
+            while(expressaoPosFixa[i] != ' ') {
+                expressao[j] = expressaoPosFixa[i];  /* copia para uma estrutura auxiliar os caracteres
+                                              que representam valores. */
+                i++;
+                j++;
+            }
+            expressao[j] = '\0';
+            valor = stringDouble(expressao); /* converter a string de \a chars para \a double. */
+            inserirNumero(pilha2,valor);
+        }else if(expressaoPosFixa[i] == '+'){
+            a = pilha2->primeiro->valor;
+            desalocaPilhaNumero(pilha2);
+            b = pilha2->primeiro->valor;
+            desalocaPilhaNumero(pilha2);
+            r = b+a;
+            inserirNumero(pilha2,r);
+        }else if(expressaoPosFixa[i] == '-'){
+            a = pilha2->primeiro->valor;
+            desalocaPilhaNumero(pilha2);
+            b = pilha2->primeiro->valor;
+            desalocaPilhaNumero(pilha2);
+            r = b-a;
+            inserirNumero(pilha2,r);
+        }else if(expressaoPosFixa[i] == '*'){
+            a = pilha2->primeiro->valor;
+            desalocaPilhaNumero(pilha2);
+            b = pilha2->primeiro->valor;
+            desalocaPilhaNumero(pilha2);
+            r = b*a;
+            inserirNumero(pilha2,r);
+        }else if(expressaoPosFixa[i] == '/'){
+            a = pilha2->primeiro->valor;
+            desalocaPilhaNumero(pilha2);
+            b = pilha2->primeiro->valor;
+            desalocaPilhaNumero(pilha2);
+            r = b/a;
+            inserirNumero(pilha2,r);
+        }
+        i++;
+    }
+    printf("Forma Posfixa: ");
+    printf("%s\n", expressaoPosFixa);
+    printf("Valor da Expressao: %lf\n", pilha2->primeiro->valor);
     getchar();
+    desalocaPilhaNumero(pilha2);
+    if(pilha2->primeiro == NULL){
+        free(pilha2);
+        pilha2 = NULL;
+    }
     menu(pilha);
 
     return 1;
 }
+
+void printaPilha(t_pilhaNumero* pilha){
+    t_numero* elemento = pilha->primeiro;
+
+    while(elemento != NULL){
+        printf("%lf \n", elemento->valor);
+        elemento = elemento->proximo;
+    }
+}
+
+
+
+
+
+
+/*============================================================*/
+void desalocaPilhaNumero(t_pilhaNumero* pilha){
+    t_numero* elemento = pilha->primeiro;
+    pilha->primeiro = elemento->proximo;
+
+    free(elemento);
+    elemento = NULL;
+    pilha->topo --;
+}
+
+double stringDouble(char expressao[]){
+    char *token;                   /* Ponteiro char auxiliar para a string. */
+    int i;
+    const char delimitador[3] = ".,";
+    double valor;
+
+    valor = 0;
+
+    token = strtok(expressao, delimitador); /* Token da parte inteira. */
+
+    for(i=0; i<strlen(token); i++) { /* Converte a parte inteira. */
+        valor = valor + ((double)token[i] - 48) * pow(10, strlen(token) - (i + 1));
+    }
+
+    while(token != NULL) {
+        token = strtok(NULL, delimitador);  /* Token da parte decimal. */
+
+        if(token != NULL) {
+            for(i=0; i<strlen(token); i++) { /* Converte a parte inteira do valor separado. */
+                valor = valor + ((double) token[i] - 48) * pow(10, -1*(i + 1));
+            }
+        }
+    }
+
+    return valor;
+
+}
+
+int inserirNumero(t_pilhaNumero* pilha, double valor){
+    if(pilha == NULL){
+        exit(-1);
+    }
+
+    t_numero* aux_inserir = alocaNumero(pilha,valor);
+        
+    if(!aux_inserir){
+        exit(-1);
+    }else if(pilha->topo == -1){
+        pilha->primeiro = aux_inserir;
+    }else{
+        aux_inserir->proximo = pilha->primeiro;
+        pilha->primeiro = aux_inserir;
+    }
+
+    pilha->topo ++;
+
+    return 1;    
+}
+
+t_numero* alocaNumero(t_pilhaNumero* pilha, double valor){
+    t_numero* numero = (t_numero*) malloc(sizeof(t_numero));
+
+    if(!numero){
+        free(pilha);
+        exit(-1);
+    }
+
+    numero->valor = valor;
+    numero->proximo = NULL;
+
+    return numero;
+}
+
+
+
+/*============================================================*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int expressaoInvalida(t_pilha* pilha){
     cabecalho();
@@ -314,9 +513,24 @@ int expressaoInvalida(t_pilha* pilha){
     return 1;
 }
 
-int calculadora(){
-    cabecalho();
-    printf("Modo calculadora! \n");
+int calculadora(t_pilha* pilha){
+    /*if(pilha == NULL){
+        pilha = alocaPilha();
+    }
+
+    char comando[1000];
+
+    while(comando != 'x'){
+        cabecalho();
+        printf("\t Modo Calculadora\n");
+
+        if(pilha->primeiro == NULL){
+            printf("A pilha esta vazia! \n");
+        }
+
+        printf("-> ");
+        scanf("%s", comando);
+    }*/
 
     return 1;
 }
@@ -356,7 +570,7 @@ void resposta(int opcao, t_pilha* pilha){
         getchar();
         resolveExpressao(caractere,pilha);
     }else if(opcao == 2){
-        calculadora();
+        calculadora(pilha);
     }else{
         system(CLEAR);
         cabecalho();
