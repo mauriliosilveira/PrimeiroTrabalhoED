@@ -4,6 +4,7 @@
 #include <string.h>
 #include <math.h>
 
+/*Alocando uma pilha que vai armazenar a conversao de char para double*/
 t_pilhaNumero* alocaPilhaNumero(){
     t_pilhaNumero* pilha = (t_pilhaNumero*) malloc(sizeof(t_pilhaNumero));
 
@@ -15,8 +16,9 @@ t_pilhaNumero* alocaPilhaNumero(){
     pilha->topo = -1;
 
     return pilha;
-}
+}/*end alocaPilhaNumero();*/
 
+/*Alocando uma pilha que vai armazenar a expressao*/
 t_pilha* alocaPilha(){
     t_pilha* pilha = (t_pilha*) malloc(sizeof(t_pilha));
 
@@ -28,8 +30,9 @@ t_pilha* alocaPilha(){
     pilha->topo = -1;
 
     return pilha;
-}
+}/*end alocaPilha();*/
 
+/*Alocando elementos que vao ser da pilha de char*/
 t_elemento* alocaElemento(char* caractere, t_pilha* pilha){
     t_elemento* elemento = (t_elemento*) malloc(sizeof(t_elemento));
     elemento->caractere = (char*) malloc((strlen(caractere)+1) * sizeof(char));
@@ -43,8 +46,9 @@ t_elemento* alocaElemento(char* caractere, t_pilha* pilha){
     elemento->proximo = NULL;
 
     return elemento;
-}
+}/*end alocaElemento(char* caractere, t_pilha* pilha);*/
 
+/*Inserindo na pilha que vai ser do tipo de char*/
 int inserirPilha(char* caractere, t_pilha* pilha){
     if(pilha == NULL){
         exit(-1);
@@ -64,8 +68,9 @@ int inserirPilha(char* caractere, t_pilha* pilha){
     pilha->topo ++;
 
     return 1;    
-}
+}/*end inserirPilha(char* caractere, t_pilha* pilha);*/
 
+/*Desalocando da pilha que vai ser do tipo char*/
 void desalocaPilha(t_pilha* pilha){
     t_elemento* elemento = pilha->primeiro;
     pilha->primeiro = elemento->proximo;
@@ -74,8 +79,9 @@ void desalocaPilha(t_pilha* pilha){
     free(elemento);
     elemento = NULL;
     pilha->topo --;
-}
+}/*end desalocaPilha(t_pilha* pilha);*/
 
+/*Validacao da expressao informada pelo usuario para saber se e valida ou invalida*/
 int resolveExpressao(char* caractere, t_pilha* pilha){
     cabecalho();
     int contador = 0;
@@ -141,12 +147,13 @@ int resolveExpressao(char* caractere, t_pilha* pilha){
     }
 
     return 1;
-}
+}/*end resolveExpressao(char* caractere, t_pilha* pilha);*/
 
+/*Transformacao de uma expressao valida em PosFixa*/
 int posFixa(t_pilha* pilha, char* caractere){
     cabecalho();
     int contador = 0, nContador = 0;
-    char aux, nCaractere [1000];
+    char aux, nCaractere [100];
 
     pilha = alocaPilha();
 
@@ -275,7 +282,7 @@ int posFixa(t_pilha* pilha, char* caractere){
     printf("Expressão Valida!\n");
 
     int cont = 0, contPos = 0;
-    char expressaoPosFixa[1000];
+    char expressaoPosFixa[100];
 
     while(nCaractere[cont] != '\0'){
         if(((nCaractere[cont] != ' ') && (nCaractere[cont+1] == '+')) || 
@@ -301,7 +308,7 @@ int posFixa(t_pilha* pilha, char* caractere){
 
     expressaoPosFixa[contPos] = '\0';
     int i = 0, j = 0;
-    char expressao[1000];
+    char expressao[100];
     double valor = 0, a = 0 , b = 0, r = 0;
 
     t_pilhaNumero* pilha2 = alocaPilhaNumero();
@@ -325,15 +332,14 @@ int posFixa(t_pilha* pilha, char* caractere){
                 pilha2 = NULL;
             }
             menu(pilha);
-        }else if(expressaoPosFixa[i]<=57 && expressaoPosFixa[i]>=48){ /* \b 57 é 9 em ASCII e \b 48 é 0. */
+        }else if(expressaoPosFixa[i]<=57 && expressaoPosFixa[i]>=48){
             while(expressaoPosFixa[i] != ' ') {
-                expressao[j] = expressaoPosFixa[i];  /* copia para uma estrutura auxiliar os caracteres
-                                              que representam valores. */
+                expressao[j] = expressaoPosFixa[i]; 
                 i++;
                 j++;
             }
             expressao[j] = '\0';
-            valor = stringDouble(expressao); /* converter a string de \a chars para \a double. */
+            valor = stringDouble(expressao); 
             inserirNumero(pilha2,valor);
         }else if(expressaoPosFixa[i] == '+'){
             a = pilha2->primeiro->valor;
@@ -378,23 +384,9 @@ int posFixa(t_pilha* pilha, char* caractere){
     menu(pilha);
 
     return 1;
-}
+}/*end posFixa(t_pilha* pilha, char* caractere);*/
 
-void printaPilha(t_pilhaNumero* pilha){
-    t_numero* elemento = pilha->primeiro;
-
-    while(elemento != NULL){
-        printf("%lf \n", elemento->valor);
-        elemento = elemento->proximo;
-    }
-}
-
-
-
-
-
-
-/*============================================================*/
+/*Desalocando um double da pilha de numeros*/
 void desalocaPilhaNumero(t_pilhaNumero* pilha){
     t_numero* elemento = pilha->primeiro;
     pilha->primeiro = elemento->proximo;
@@ -402,27 +394,28 @@ void desalocaPilhaNumero(t_pilhaNumero* pilha){
     free(elemento);
     elemento = NULL;
     pilha->topo --;
-}
+}/*end desalocaPilhaNumero(t_pilhaNumero* pilha);*/
 
+/*Convertendo char em double*/
 double stringDouble(char expressao[]){
-    char *token;                   /* Ponteiro char auxiliar para a string. */
+    char *token;                 
     int i;
     const char delimitador[3] = ".,";
     double valor;
 
     valor = 0;
 
-    token = strtok(expressao, delimitador); /* Token da parte inteira. */
+    token = strtok(expressao, delimitador);
 
-    for(i=0; i<strlen(token); i++) { /* Converte a parte inteira. */
+    for(i=0; i<strlen(token); i++) { 
         valor = valor + ((double)token[i] - 48) * pow(10, strlen(token) - (i + 1));
     }
 
     while(token != NULL) {
-        token = strtok(NULL, delimitador);  /* Token da parte decimal. */
+        token = strtok(NULL, delimitador);  
 
         if(token != NULL) {
-            for(i=0; i<strlen(token); i++) { /* Converte a parte inteira do valor separado. */
+            for(i=0; i<strlen(token); i++) { 
                 valor = valor + ((double) token[i] - 48) * pow(10, -1*(i + 1));
             }
         }
@@ -430,8 +423,9 @@ double stringDouble(char expressao[]){
 
     return valor;
 
-}
+}/*end stringDouble(char expressao[]);*/
 
+/*Inserindo um numero na pilha de doubles*/
 int inserirNumero(t_pilhaNumero* pilha, double valor){
     if(pilha == NULL){
         exit(-1);
@@ -451,8 +445,9 @@ int inserirNumero(t_pilhaNumero* pilha, double valor){
     pilha->topo ++;
 
     return 1;    
-}
+}/*end inserirNumero(t_pilhaNumero* pilha, double valor);*/
 
+/*A alocando a struct auxiliar que vai alocar apenas double*/
 t_numero* alocaNumero(t_pilhaNumero* pilha, double valor){
     t_numero* numero = (t_numero*) malloc(sizeof(t_numero));
 
@@ -465,29 +460,9 @@ t_numero* alocaNumero(t_pilhaNumero* pilha, double valor){
     numero->proximo = NULL;
 
     return numero;
-}
+}/*end alocaNumero(t_pilhaNumero* pilha, double valor);*/
 
-
-
-/*============================================================*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*Funcao para quando a expressao fornecida for invalida*/
 int expressaoInvalida(t_pilha* pilha){
     cabecalho();
     printf("Expressão Invalida! \n");
@@ -511,14 +486,14 @@ int expressaoInvalida(t_pilha* pilha){
     menu(pilha);
 
     return 1;
-}
+}/*end expressaoInvalida(t_pilha* pilha);*/
 
 int calculadora(t_pilha* pilha){
     /*if(pilha == NULL){
         pilha = alocaPilha();
     }
 
-    char comando[1000];
+    char comando[100];
 
     while(comando != 'x'){
         cabecalho();
@@ -535,6 +510,7 @@ int calculadora(t_pilha* pilha){
     return 1;
 }
 
+/*Menu do programa*/
 void menu(t_pilha* pilha){
     cabecalho();
     
@@ -546,15 +522,17 @@ void menu(t_pilha* pilha){
     scanf("%d", &opcao);
     setbuf(stdin, NULL);
     resposta(opcao,pilha);
-}
+}/*end menu(t_pilha* pilha);*/
 
+/*Cabecalho do programa*/
 void cabecalho(){
     system(CLEAR);
     printf("================================== \n");
     printf("\t PURA MATEMATICA \n");
     printf("================================== \n"); 
-}
+}/*end cabecalho();*/
 
+/*Pegando a resposta do usuario*/
 void resposta(int opcao, t_pilha* pilha){
     if(opcao == 0){
         system(CLEAR);
@@ -564,7 +542,7 @@ void resposta(int opcao, t_pilha* pilha){
         printf("\n");
     }else if(opcao == 1){
         cabecalho();
-        char caractere[1000];
+        char caractere[100];
         printf("-> ");
         scanf("%[^\n]s", caractere);
         getchar();
@@ -578,4 +556,4 @@ void resposta(int opcao, t_pilha* pilha){
         getchar();
         menu(pilha);
     }
-}
+}/*end resposta(int opcao, t_pilha* pilha);*/

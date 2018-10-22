@@ -1,0 +1,35 @@
+******************** INSTRUÇÕES PARA A EXECUÇÃO DO PROGRAMA DESENVOLVIDO ********************
+
+1) O projeto foi totalmente desenvolvido no linux Ubuntu 16.04 com gcc version 5.4.0.
+
+2) O programa foi desenvolvido e compilar no padrão ansi e C99.
+	2.1) comandos:
+		-> gcc -ansi -Wall -c lista.c 
+		*(para a criação do arquivo objeto onde se encontra todas as funções e soluções do programa).
+		
+		-> gcc -ansi -Wall -o main main.c lista.o -lm
+		*(para compilar o arquivo objeto juntamente com a main, tendo assim acesso a todas as funções desenvolvidas dentro do arquivo lista.c)
+		*(o -lm foi utilizado para em virtude do código fazer a utilização da função pow da bibliotera math.h)
+
+		-> ./main
+		*(executando o programa)
+
+3) Bibliotecas utilizadas:
+	3.1) Bibliotecas da linguagem C:
+		-> <stdio.h>
+		-> <stdlib.h>
+		-> <string.h>
+		-> <math.h>
+
+
+	3.2) Bibliotecas criadas:
+		-> "lista.h"
+
+4) Menu
+	4.1) Resolver Expressão
+		-> Basta informar qualquer expressão matemática que o programa tem como função verificar se a expressão informada está escrita da maneira correta ou não.
+		*(se a expressão não estiver correta o programa irá mostrar uma mensagem de "Expressão Invalida" bastando apenas apertar ENTER para voltar ao menu principal)
+		*(caso a expressão seja válida o programa mostrarar uma mensagem de "Expressão Valida", informará a expressão na sua forma PosFixa e por último informará o seu valor, bastando apenas apertar ENTER para voltar ao menu principal)
+
+	4.2) Modo Calculadora
+		Sem implementação...
